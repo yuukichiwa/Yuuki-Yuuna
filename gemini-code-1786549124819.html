@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yuuki & Yuuna Finance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm px-6 py-4 flex justify-between items-center mb-8">
+        <div class="text-xl font-bold text-indigo-600 flex items-center gap-2">
+            <i class="fa-solid fa-wallet"></i> Yuuki & Yuuna Finance
+        </div>
+        <div class="flex items-center gap-4">
+            <select id="displayCurrency" class="bg-slate-100 border-none rounded-lg px-3 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="IDR">🇮🇩 IDR (Rupiah)</option>
+                <option value="MYR">🇲🇾 MYR (Ringgit)</option>
+                <option value="USD">🇺🇸 USD (Dolar)</option>
+                <option value="SGD">🇸🇬 SGD (Dolar SG)</option>
+                <option value="EUR">🇪🇺 EUR (Euro)</option>
+                <option value="JPY">🇯🇵 JPY (Yen)</option>
+            </select>
+            <button id="modLoginBtn" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+                <i class="fa-solid fa-lock mr-1"></i> Moderator
+            </button>
+            <button id="modLogoutBtn" class="hidden bg-red-100 text-red-600 hover:bg-red-200 px-4 py-2 rounded-lg text-sm font-semibold transition">
+                Logout Mod
+            </button>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-4">
+        <!-- Dashboard Summary -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                <p class="text-sm text-slate-500 font-medium mb-1">Total Saldo</p>
+                <h2 id="totalBalance" class="text-3xl font-bold text-slate-800">Menghitung...</h2>
+            </div>
+            <div class="bg-emerald-50 rounded-2xl p-6 shadow-sm border border-emerald-100">
+                <p class="text-sm text-emerald-600 font-medium mb-1">Total Pemasukan</p>
+                <h2 id="totalIncome" class="text-2xl font-bold text-emerald-700">...</h2>
+            </div>
+            <div class="bg-rose-50 rounded-2xl p-6 shadow-sm border border-rose-100">
+                <p class="text-sm text-rose-600 font-medium mb-1">Total Pengeluaran</p>
+                <h2 id="totalExpense" class="text-2xl font-bold text-rose-700">...</h2>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Form Input -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-fit">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">Catat Transaksi</h3>
+                <form id="transactionForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Jenis</label>
+                        <select id="type" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 outline-none focus:border-indigo-500">
+                            <option value="income">Pemasukan</option>
+                            <option value="expense">Pengeluaran</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Mata Uang Input</label>
+                        <select id="inputCurrency" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 outline-none focus:border-indigo-500">
+                            <option value="IDR">IDR</option>
+                            <option value="MYR">MYR</option>
+                            <option value="USD">USD</option>
+                            <option value="SGD">SGD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="JPY">JPY</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Nominal</label>
+                        <input type="number" id="amount" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 outline-none focus:border-indigo-500" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Keterangan</label>
+                        <input type="text" id="description" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 outline-none focus:border-indigo-500" placeholder="Contoh: Makan siang">
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition">
+                        Simpan Transaksi
+                    </button>
+                </form>
+            </div>
+
+            <!-- List Transaksi -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">Riwayat Transaksi</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-slate-400 text-sm border-b">
+                                <th class="pb-3 font-medium">Keterangan</th>
+                                <th class="pb-3 font-medium">Nominal Asli</th>
+                                <th class="pb-3 font-medium text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionList" class="text-sm">
+                            <!-- Data akan muncul di sini -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State Management
+        let exchangeRates = {};
+        let transactions = JSON.parse(localStorage.getItem('yy_finance_data')) || [];
+        let isModerator = false;
+
+        const MOD_PASSWORD = "yuukiyuuna";
+        const API_URL = "https://open.er-api.com/v6/latest/USD"; // API Gratis, real-time tiap hari
+
+        // DOM Elements
+        const displayCurrencySelect = document.getElementById('displayCurrency');
+        const totalBalanceEl = document.getElementById('totalBalance');
+        const totalIncomeEl = document.getElementById('totalIncome');
+        const totalExpenseEl = document.getElementById('totalExpense');
+        const transactionListEl = document.getElementById('transactionList');
+        const transactionForm = document.getElementById('transactionForm');
+        
+        const modLoginBtn = document.getElementById('modLoginBtn');
+        const modLogoutBtn = document.getElementById('modLogoutBtn');
+
+        // Fetch Exchange Rates
+        async function fetchRates() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                exchangeRates = data.rates;
+                updateDashboard();
+            } catch (error) {
+                console.error("Gagal mengambil data kurs", error);
+                alert("Gagal memuat data kurs mata uang. Pastikan koneksi internet aktif.");
+            }
+        }
+
+        // Convert Currency
+        function convertCurrency(amount, fromCurrency, toCurrency) {
+            if (!exchangeRates[fromCurrency] || !exchangeRates[toCurrency]) return amount;
+            // Convert to base (USD) first, then to target currency
+            const amountInUSD = amount / exchangeRates[fromCurrency];
+            return amountInUSD * exchangeRates[toCurrency];
+        }
+
+        // Format Number to Currency String
+        function formatCurrency(amount, currencyCode) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: currencyCode,
+                minimumFractionDigits: (currencyCode === 'IDR' || currencyCode === 'JPY') ? 0 : 2
+            }).format(amount);
+        }
+
+        // Update UI
+        function updateDashboard() {
+            if (Object.keys(exchangeRates).length === 0) return; // Tunggu API selesai
+
+            const targetCurrency = displayCurrencySelect.value;
+            let totalIncome = 0;
+            let totalExpense = 0;
+
+            transactionListEl.innerHTML = '';
+
+            transactions.forEach((trx, index) => {
+                // Kalkulasi Total
+                const convertedAmount = convertCurrency(trx.amount, trx.currency, targetCurrency);
+                if (trx.type === 'income') totalIncome += convertedAmount;
+                else totalExpense += convertedAmount;
+
+                // Render List
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-50 hover:bg-slate-50 transition";
+                const amountClass = trx.type === 'income' ? 'text-emerald-600' : 'text-rose-600';
+                const sign = trx.type === 'income' ? '+' : '-';
+                
+                tr.innerHTML = `
+                    <td class="py-4">
+                        <p class="font-semibold text-slate-800">${trx.description}</p>
+                        <p class="text-xs text-slate-400">${new Date(trx.date).toLocaleDateString('id-ID')}</p>
+                    </td>
+                    <td class="py-4">
+                        <span class="${amountClass} font-semibold">${sign} ${formatCurrency(trx.amount, trx.currency)}</span>
+                    </td>
+                    <td class="py-4 text-right">
+                        ${isModerator ? `<button onclick="deleteTransaction(${index})" class="text-red-500 hover:text-red-700 bg-red-50 p-2 rounded-lg transition"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-slate-300 text-xs"><i class="fa-solid fa-lock"></i></span>'}
+                    </td>
+                `;
+                transactionListEl.appendChild(tr);
+            });
+
+            // Update Cards
+            const balance = totalIncome - totalExpense;
+            totalBalanceEl.textContent = formatCurrency(balance, targetCurrency);
+            totalIncomeEl.textContent = formatCurrency(totalIncome, targetCurrency);
+            totalExpenseEl.textContent = formatCurrency(totalExpense, targetCurrency);
+        }
+
+        // Form Submit
+        transactionForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newTrx = {
+                type: document.getElementById('type').value,
+                currency: document.getElementById('inputCurrency').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                description: document.getElementById('description').value,
+                date: new Date().toISOString()
+            };
+            
+            transactions.unshift(newTrx); // Masukkan di urutan teratas
+            saveData();
+            updateDashboard();
+            transactionForm.reset();
+        });
+
+        // Delete Transaction
+        window.deleteTransaction = function(index) {
+            if(confirm("Yakin ingin menghapus transaksi ini?")) {
+                transactions.splice(index, 1);
+                saveData();
+                updateDashboard();
+            }
+        }
+
+        // Save Data (Saat ini menggunakan LocalStorage)
+        function saveData() {
+            localStorage.setItem('yy_finance_data', JSON.stringify(transactions));
+        }
+
+        // Moderator Auth
+        modLoginBtn.addEventListener('click', () => {
+            const password = prompt("Masukkan password Moderator:");
+            if (password === MOD_PASSWORD) {
+                isModerator = true;
+                modLoginBtn.classList.add('hidden');
+                modLogoutBtn.classList.remove('hidden');
+                updateDashboard();
+                alert("Berhasil login sebagai Moderator. Anda sekarang bisa menghapus data.");
+            } else if (password !== null) {
+                alert("Password salah!");
+            }
+        });
+
+        modLogoutBtn.addEventListener('click', () => {
+            isModerator = false;
+            modLoginBtn.classList.remove('hidden');
+            modLogoutBtn.classList.add('hidden');
+            updateDashboard();
+        });
+
+        // Event Listeners
+        displayCurrencySelect.addEventListener('change', updateDashboard);
+
+        // Init
+        fetchRates();
+    </script>
+</body>
+</html>
