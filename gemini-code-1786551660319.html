@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keluarga Hemat</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-dark: #0f111a;
+            --bg-card: #1a1d2d;
+            --primary: #8b5cf6;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            padding-bottom: 70px;
+        }
+
+        header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(26,29,45,1) 0%, rgba(15,17,26,0) 100%);
+        }
+
+        .greeting h1 { font-size: 1.2rem; }
+        .greeting p { font-size: 0.8rem; color: var(--text-muted); }
+
+        .mod-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .container { padding: 0 15px; }
+
+        /* Currency Selector */
+        .currency-selector {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .currency-selector span {
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .currency-selector select {
+            background: var(--bg-dark);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px;
+            border-radius: 8px;
+            font-weight: bold;
+            outline: none;
+        }
+
+        /* Balance Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .card-title { font-size: 0.8rem; font-weight: bold; }
+        .card-amount { font-size: 1.1rem; font-weight: bold; word-break: break-all; }
+
+        .bg-yuuki { background: linear-gradient(135deg, #4338ca, #6366f1); }
+        .bg-yuuna { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .bg-bersama { background: linear-gradient(135deg, #1d4ed8, #3b82f6); }
+        .bg-total { background: linear-gradient(135deg, #5b21b6, #8b5cf6); }
+
+        /* General Sections */
+        .section-box {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .section-title { font-size: 1rem; margin-bottom: 10px; }
+        
+        .currency-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Target Bulanan */
+        .progress-bar-bg {
+            background: rgba(255,255,255,0.1);
+            height: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ec4899, #8b5cf6);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Transactions */
+        .tx-list { display: flex; flex-direction: column; gap: 10px; }
+        .tx-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .tx-left { display: flex; flex-direction: column; }
+        .tx-desc { font-size: 0.9rem; font-weight: bold; }
+        .tx-meta { font-size: 0.7rem; color: var(--text-muted); }
+        .tx-right { display: flex; align-items: center; gap: 10px; }
+        .tx-amount { font-size: 0.9rem; font-weight: bold; }
+        .income { color: var(--success); }
+        .expense { color: var(--danger); }
+        
+        .del-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+        }
+        .form-group { margin-bottom: 12px; display: flex; flex-direction: column; }
+        .form-group label { font-size: 0.8rem; margin-bottom: 5px; color: var(--text-muted); }
+        .form-group input, .form-group select {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: var(--bg-dark);
+            color: white;
+        }
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            width: 100%;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .btn-close {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--text-muted);
+            padding: 12px;
+            border-radius: 6px;
+            width: 100%;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background: var(--bg-card);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 50;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 0.7rem; cursor: pointer; }
+        .nav-item.active { color: var(--primary); }
+        .nav-fab {
+            background: var(--primary);
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.5rem; color: white;
+            margin-top: -20px;
+            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.5);
+            cursor: pointer;
+        }
+
+        canvas { max-width: 100%; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="greeting">
+            <h1>Halo, Keluarga Hemat! ✨</h1>
+            <p>Kelola keuangan kalian dengan cinta 💜</p>
+        </div>
+        <button class="mod-btn" onclick="toggleModerator()">Moderator Mode</button>
+    </header>
+
+    <div class="container">
+        
+        <!-- Pilihan Mata Uang Utama -->
+        <div class="currency-selector">
+            <span>Tampilkan Saldo Dalam:</span>
+            <select id="main-currency" onchange="renderApp()">
+                <option value="IDR">🇮🇩 IDR</option>
+                <option value="MYR">🇲🇾 MYR</option>
+                <option value="USD">🇺🇸 USD</option>
+                <option value="JPY">🇯🇵 JPY</option>
+                <option value="EUR">🇪🇺 EUR</option>
+            </select>
+        </div>
+
+        <!-- Saldo Cards -->
+        <div class="cards-grid">
+            <div class="card bg-yuuki">
+                <div class="card-title">👤 Total Yuuki</div>
+                <div class="card-amount" id="bal-yuuki">Rp 0</div>
+            </div>
+            <div class="card bg-yuuna">
+                <div class="card-title">👩🏻‍🦰 Total Yuuna</div>
+                <div class="card-amount" id="bal-yuuna">Rp 0</div>
+            </div>
+            <div class="card bg-bersama">
+                <div class="card-title">🤝 Total Bersama</div>
+                <div class="card-amount" id="bal-bersama">Rp 0</div>
+            </div>
+            <div class="card bg-total">
+                <div class="card-title">💜 Total Keseluruhan</div>
+                <div class="card-amount" id="bal-total">Rp 0</div>
+            </div>
+        </div>
+
+        <!-- Konversi Mata Uang Lainnya -->
+        <div class="section-box">
+            <div class="section-title">Nilai dalam mata uang lain</div>
+            <div class="currency-row"><span>🇲🇾 Ringgit (MYR)</span> <strong id="conv-myr">RM 0.00</strong></div>
+            <div class="currency-row"><span>🇺🇸 US Dollar (USD)</span> <strong id="conv-usd">$ 0.00</strong></div>
+            <div class="currency-row"><span>🇯🇵 Yen (JPY)</span> <strong id="conv-jpy">¥ 0</strong></div>
+            <div class="currency-row"><span>🇪🇺 Euro (EUR)</span> <strong id="conv-eur">€ 0.00</strong></div>
+        </div>
+
+        <!-- Target Bulanan -->
+        <div class="section-box">
+            <div class="section-title" style="display:flex; justify-content:space-between">
+                <span>Target Penghematan</span>
+                <span id="target-text">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="target-bar"></div>
+            </div>
+        </div>
+
+        <!-- Analytics -->
+        <div class="section-box">
+            <div class="section-title">Analisis Pengeluaran</div>
+            <canvas id="expenseChart"></canvas>
+        </div>
+
+        <!-- Transaksi Terbaru -->
+        <div class="section-box" style="margin-bottom: 80px;">
+            <div class="section-title">Transaksi Terbaru</div>
+            <div class="tx-list" id="transaction-list"></div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active">🏠<br>Dashboard</div>
+        <div class="nav-item">📊<br>Analytics</div>
+        <div class="nav-fab" onclick="document.getElementById('inputModal').style.display='flex'">+</div>
+        <div class="nav-item">💳<br>Transaksi</div>
+        <div class="nav-item">⚙️<br>Pengaturan</div>
+    </div>
+
+    <!-- Input Modal -->
+    <div class="modal" id="inputModal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 15px;">Tambah Transaksi</h2>
+            <div class="form-group">
+                <label>Pemilik Dana</label>
+                <select id="inp-owner">
+                    <option value="Yuuki">Yuuki</option>
+                    <option value="Yuuna">Yuuna</option>
+                    <option value="Bersama">Bersama</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Jenis</label>
+                <select id="inp-type">
+                    <option value="income">Pemasukan</option>
+                    <option value="expense">Pengeluaran</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Kategori</label>
+                <input type="text" id="inp-category" placeholder="Makanan, Belanja, dll..." autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>Mata Uang Input</label>
+                <select id="inp-currency">
+                    <option value="IDR">IDR - Rupiah</option>
+                    <option value="MYR">MYR - Ringgit</option>
+                    <option value="USD">USD - Dolar</option>
+                    <option value="JPY">JPY - Yen</option>
+                    <option value="EUR">EUR - Euro</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Nominal</label>
+                <input type="number" id="inp-amount" placeholder="0">
+            </div>
+            <button class="btn-submit" onclick="addTransaction()">Simpan Transaksi</button>
+            <button class="btn-close" onclick="document.getElementById('inputModal').style.display='none'">Batal</button>
+        </div>
+    </div>
+
+    <script>
+        const rates = {
+            IDR: 1,
+            MYR: 3450, // 1 MYR = 3450 IDR
+            USD: 16000,
+            JPY: 105,
+            EUR: 17200
+        };
+
+        const locales = {
+            IDR: 'id-ID',
+            MYR: 'en-MY', 
+            USD: 'en-US',
+            JPY: 'ja-JP',
+            EUR: 'de-DE'
+        };
+
+        let transactions = JSON.parse(localStorage.getItem('kh_transactions')) || [];
+        let isModerator = false;
+        let chartInstance = null;
+
+        function formatDynamicCurrency(amountInIDR, currencyCode) {
+            const convertedAmount = amountInIDR / rates[currencyCode];
+            const isZeroDecimals = currencyCode === 'IDR' || currencyCode === 'JPY';
+            
+            return new Intl.NumberFormat(locales[currencyCode], { 
+                style: 'currency', 
+                currency: currencyCode, 
+                minimumFractionDigits: isZeroDecimals ? 0 : 2,
+                maximumFractionDigits: isZeroDecimals ? 0 : 2
+            }).format(convertedAmount);
+        }
+
+        function toggleModerator() {
+            if (isModerator) {
+                isModerator = false;
+                alert("Keluar dari Mode Moderator.");
+                renderApp();
+            } else {
+                const pass = prompt("Masukkan password moderator:");
+                if (pass === "yuukiyuuna") {
+                    isModerator = true;
+                    alert("Berhasil login sebagai Moderator!");
+                    renderApp();
+                } else {
+                    alert("Password salah!");
+                }
+            }
+        }
+
+        function addTransaction() {
+            const owner = document.getElementById('inp-owner').value;
+            const type = document.getElementById('inp-type').value;
+            const category = document.getElementById('inp-category').value || 'Lainnya';
+            const currency = document.getElementById('inp-currency').value;
+            const rawAmount = parseFloat(document.getElementById('inp-amount').value);
+
+            if (!rawAmount || rawAmount <= 0) return alert("Nominal tidak valid!");
+
+            const amountInIDR = rawAmount * rates[currency];
+
+            const tx = {
+                id: Date.now(),
+                date: new Date().toLocaleDateString('id-ID'),
+                owner, type, category, currency, 
+                rawAmount, amountInIDR
+            };
+
+            transactions.push(tx);
+            localStorage.setItem('kh_transactions', JSON.stringify(transactions));
+            
+            document.getElementById('inputModal').style.display = 'none';
+            document.getElementById('inp-amount').value = '';
+            document.getElementById('inp-category').value = '';
+            renderApp();
+        }
+
+        function deleteTransaction(id) {
+            if(confirm("Hapus transaksi ini?")) {
+                transactions = transactions.filter(t => t.id !== id);
+                localStorage.setItem('kh_transactions', JSON.stringify(transactions));
+                renderApp();
+            }
+        }
+
+        function renderApp() {
+            let balYuuki = 0, balYuuna = 0, balBersama = 0;
+            let totalExpense = 0;
+            let expenseByCategory = {};
+
+            const listEl = document.getElementById('transaction-list');
+            listEl.innerHTML = '';
+            const sortedTx = [...transactions].reverse();
+
+            sortedTx.forEach(tx => {
+                const multiplier = tx.type === 'income' ? 1 : -1;
+                if (tx.owner === 'Yuuki') balYuuki += (tx.amountInIDR * multiplier);
+                else if (tx.owner === 'Yuuna') balYuuna += (tx.amountInIDR * multiplier);
+                else balBersama += (tx.amountInIDR * multiplier);
+
+                if (tx.type === 'expense') {
+                    totalExpense += tx.amountInIDR;
+                    expenseByCategory[tx.category] = (expenseByCategory[tx.category] || 0) + tx.amountInIDR;
+                }
+
+                const sign = tx.type === 'income' ? '+' : '-';
+                const colorClass = tx.type === 'income' ? 'income' : 'expense';
+                
+                listEl.innerHTML += `
+                    <div class="tx-item">
+                        <div class="tx-left">
+                            <span class="tx-desc">${tx.category}</span>
+                            <span class="tx-meta">${tx.date} • ${tx.owner}</span>
+                        </div>
+                        <div class="tx-right">
+                            <span class="tx-amount ${colorClass}">${sign} ${tx.currency} ${new Intl.NumberFormat('id-ID').format(tx.rawAmount)}</span>
+                            <button class="del-btn" style="display: ${isModerator ? 'block' : 'none'}" onclick="deleteTransaction(${tx.id})">X</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (transactions.length === 0) {
+                listEl.innerHTML = '<div style="text-align:center; color:var(--text-muted); font-size:0.8rem;">Belum ada transaksi.</div>';
+            }
+
+            const totalBal = balYuuki + balYuuna + balBersama;
+
+            // Update Dynamic Main Balances
+            const mainCur = document.getElementById('main-currency').value;
+            document.getElementById('bal-yuuki').innerText = formatDynamicCurrency(balYuuki, mainCur);
+            document.getElementById('bal-yuuna').innerText = formatDynamicCurrency(balYuuna, mainCur);
+            document.getElementById('bal-bersama').innerText = formatDynamicCurrency(balBersama, mainCur);
+            document.getElementById('bal-total').innerText = formatDynamicCurrency(totalBal, mainCur);
+
+            // Update Static Conversions List
+            document.getElementById('conv-myr').innerText = formatDynamicCurrency(totalBal, 'MYR');
+            document.getElementById('conv-usd').innerText = formatDynamicCurrency(totalBal, 'USD');
+            document.getElementById('conv-jpy').innerText = formatDynamicCurrency(totalBal, 'JPY');
+            document.getElementById('conv-eur').innerText = formatDynamicCurrency(totalBal, 'EUR');
+
+            // Update Target Bulanan (10 Juta IDR base target)
+            const target = 10000000; 
+            const currentSavings = totalBal > 0 ? totalBal : 0;
+            let percent = (currentSavings / target) * 100;
+            if (percent > 100) percent = 100;
+            
+            document.getElementById('target-text').innerText = `${percent.toFixed(1)}% dari Target (${formatDynamicCurrency(target, mainCur)})`;
+            document.getElementById('target-bar').style.width = `${percent}%`;
+
+            updateChart(expenseByCategory);
+        }
+
+        function updateChart(dataObj) {
+            const ctx = document.getElementById('expenseChart').getContext('2d');
+            const labels = Object.keys(dataObj);
+            const data = Object.values(dataObj);
+
+            if (chartInstance) chartInstance.destroy();
+
+            if (labels.length === 0) {
+                labels.push("Belum ada data");
+                data.push(1);
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#8b5cf6', '#ef4444'],
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    plugins: { legend: { position: 'right', labels: { color: '#fff', font: {size: 10} } } },
+                    cutout: '70%', maintainAspectRatio: false
+                }
+            });
+            document.getElementById('expenseChart').style.height = '180px';
+        }
+
+        window.onload = renderApp;
+    </script>
+</body>
+</html>
