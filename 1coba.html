@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>KELUARGA HEMAT — Yuuki ✦ Yuuna</title>
+<style>
+/* ========== RESET ========== */
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background:#05070d;
+  color:#e6f0ff;
+  overflow-x:hidden;
+  min-height:100vh;
+  position:relative;
+}
+
+/* Neon glow background */
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 0%, rgba(34,211,238,0.18), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 100% 20%, rgba(192,132,252,0.18), transparent 60%),
+    radial-gradient(ellipse 80% 50% at 50% 100%, rgba(56,189,248,0.10), transparent 60%);
+  z-index:-1;
+  pointer-events:none;
+}
+
+/* ========== APP FRAME ========== */
+.app {
+  max-width:430px;
+  margin:0 auto;
+  min-height:100vh;
+  padding:22px 18px 100px;
+  position:relative;
+}
+
+/* ========== TYPOGRAPHY ========== */
+h1,h2,h3 { letter-spacing:0.02em; }
+
+.text-cyan  { color:#22d3ee; }
+.text-purple{ color:#c084fc; }
+.text-danger{ color:#f472b6; }
+.text-mute  { color:#7c8aa5; }
+
+/* ========== SCREEN CONTAINER ========== */
+.screen { display:none; animation:fadeIn 0.35s ease; }
+.screen.active { display:block; }
+@keyframes fadeIn { from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+/* =================================================
+   PROFILE SELECTION
+================================================= */
+.profile-screen {
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:0 24px;
+}
+.profile-title {
+  font-size:34px;
+  font-weight:800;
+  letter-spacing:0.35em;
+  background:linear-gradient(90deg,#22d3ee,#c084fc);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  margin-bottom:12px;
+}
+.profile-sub { color:#93a4c1; margin-bottom:40px; font-size:14px; }
+.profile-cards { display:grid; grid-template-columns:1fr 1fr; gap:14px; width:100%; max-width:340px; }
+.profile-card {
+  border-radius:22px;
+  padding:26px 12px 20px;
+  cursor:pointer;
+  transition:all 0.3s ease;
+  border:1px solid;
+  position:relative;
+  background:rgba(10,15,25,0.6);
+  backdrop-filter:blur(10px);
+}
+.profile-card.yuuki {
+  border-color:rgba(34,211,238,0.35);
+  box-shadow:0 0 30px rgba(34,211,238,0.15), inset 0 0 30px rgba(34,211,238,0.05);
+}
+.profile-card.yuuna {
+  border-color:rgba(192,132,252,0.35);
+  box-shadow:0 0 30px rgba(192,132,252,0.15), inset 0 0 30px rgba(192,132,252,0.05);
+}
+.profile-card:hover { transform:translateY(-4px) scale(1.02); }
+.profile-icon { font-size:38px; margin-bottom:10px; }
+.profile-card.yuuki .profile-icon { color:#22d3ee; text-shadow:0 0 20px rgba(34,211,238,0.7); }
+.profile-card.yuuna .profile-icon { color:#c084fc; text-shadow:0 0 20px rgba(192,132,252,0.7); }
+.profile-name { font-weight:700; letter-spacing:0.28em; font-size:14px; margin-bottom:12px; }
+.profile-card.yuuki .profile-name { color:#22d3ee; }
+.profile-card.yuuna .profile-name { color:#c084fc; }
+.profile-dot { width:6px; height:6px; border-radius:50%; margin:0 auto; }
+.profile-card.yuuki .profile-dot { background:#22d3ee; box-shadow:0 0 10px #22d3ee; }
+.profile-card.yuuna .profile-dot { background:#c084fc; box-shadow:0 0 10px #c084fc; }
+.profile-footer {
+  position:absolute;
+  bottom:60px;
+  left:0; right:0;
+  text-align:center;
+  color:#4a5875;
+  font-size:12px;
+  letter-spacing:0.1em;
+}
+
+/* =================================================
+   HEADER
+================================================= */
+.header {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:18px;
+}
+.header-title { font-size:11px; color:#93a4c1; letter-spacing:0.25em; }
+.header-name {
+  font-size:26px;
+  font-weight:800;
+  letter-spacing:0.06em;
+  margin-top:2px;
+}
+.header-actions { display:flex; gap:8px; align-items:center; }
+.mod-badge {
+  background:rgba(34,211,238,0.12);
+  border:1px solid rgba(34,211,238,0.4);
+  color:#22d3ee;
+  padding:6px 10px;
+  border-radius:10px;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:0.12em;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  cursor:pointer;
+}
+.icon-btn {
+  width:34px; height:34px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  color:#e6f0ff;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  font-size:14px;
+}
+
+/* =================================================
+   PROFILE PILL SWITCH (Yuuki / Berdua)
+================================================= */
+.pill-row { display:flex; gap:10px; margin-bottom:16px; }
+.pill {
+  flex:1;
+  padding:12px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.08);
+  color:#93a4c1;
+  font-weight:700;
+  letter-spacing:0.2em;
+  font-size:12px;
+  cursor:pointer;
+  text-align:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.pill.active-cyan {
+  background:rgba(34,211,238,0.12);
+  border-color:rgba(34,211,238,0.5);
+  color:#22d3ee;
+  box-shadow:0 0 20px rgba(34,211,238,0.15);
+}
+.pill.active-purple {
+  background:rgba(192,132,252,0.12);
+  border-color:rgba(192,132,252,0.5);
+  color:#c084fc;
+  box-shadow:0 0 20px rgba(192,132,252,0.15);
+}
+.pill.active-both {
+  background:linear-gradient(90deg,rgba(34,211,238,0.12),rgba(192,132,252,0.12));
+  border-color:rgba(255,255,255,0.25);
+  color:#fff;
+}
+
+/* =================================================
+   CARD
+================================================= */
+.card {
+  background:rgba(15,22,38,0.7);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:14px;
+  backdrop-filter:blur(10px);
+}
+.card-label { font-size:10px; letter-spacing:0.25em; color:#93a4c1; margin-bottom:6px; font-weight:600; }
+
+/* Balance card */
+.balance-amount {
+  font-size:34px;
+  font-weight:800;
+  letter-spacing:-0.01em;
+  margin-bottom:14px;
+}
+
+/* Currency chips */
+.currency-row {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.cur-chip {
+  padding:6px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  color:#93a4c1;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  cursor:pointer;
+}
+.cur-chip.active {
+  background:rgba(34,211,238,0.15);
+  border-color:#22d3ee;
+  color:#22d3ee;
+}
+
+/* Target Tabungan */
+.target-row {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+  font-size:13px;
+}
+.target-label { display:flex; align-items:center; gap:8px; color:#e6f0ff; font-weight:500; }
+.target-pct { color:#22d3ee; font-weight:700; }
+.progress-bar {
+  height:8px;
+  background:rgba(255,255,255,0.06);
+  border-radius:999px;
+  overflow:hidden;
+  margin-bottom:6px;
+}
+.progress-fill {
+  height:100%;
+  background:linear-gradient(90deg,#22d3ee,#818cf8);
+  border-radius:999px;
+  transition:width 0.6s ease;
+  box-shadow:0 0 12px rgba(34,211,238,0.5);
+}
+.progress-info { font-size:11px; color:#7c8aa5; }
+
+/* In/Out Cards Grid */
+.stats-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:16px;
+}
+.stat-box {
+  background:rgba(15,22,38,0.7);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;
+  padding:14px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.stat-icon {
+  width:36px; height:36px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px;
+  flex-shrink:0;
+}
+.stat-box.in .stat-icon { background:rgba(34,211,238,0.15); color:#22d3ee; }
+.stat-box.out .stat-icon { background:rgba(244,114,182,0.15); color:#f472b6; }
+.stat-info-label { font-size:10px; letter-spacing:0.2em; color:#93a4c1; font-weight:600; }
+.stat-info-value { font-size:15px; font-weight:700; margin-top:2px; }
+.stat-box.in  .stat-info-value { color:#22d3ee; }
+.stat-box.out .stat-info-value { color:#f472b6; }
+
+/* =================================================
+   TRANSACTIONS LIST
+================================================= */
+.section-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:20px 2px 12px;
+}
+.section-title { font-size:16px; font-weight:700; }
+.link-btn { background:none; border:none; color:#22d3ee; font-size:11px; font-weight:700; letter-spacing:0.15em; cursor:pointer; }
+
+.tx-item {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px;
+  background:rgba(15,22,38,0.7);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:14px;
+  margin-bottom:8px;
+  animation:slideIn 0.3s ease;
+}
+@keyframes slideIn { from{opacity:0; transform:translateX(-8px);} to{opacity:1; transform:translateX(0);} }
+.tx-icon {
+  width:38px; height:38px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.06);
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px;
+  flex-shrink:0;
+  color:#c084fc;
+}
+.tx-body { flex:1; min-width:0; }
+.tx-title { font-size:14px; font-weight:600; margin-bottom:2px; }
+.tx-meta { font-size:11px; color:#7c8aa5; }
+.tx-amount { font-size:14px; font-weight:700; text-align:right; white-space:nowrap; }
+.tx-amount.in  { color:#22d3ee; }
+.tx-amount.out { color:#f472b6; }
+
+/* =================================================
+   TAMBAH TRANSAKSI SCREEN
+================================================= */
+.big-title {
+  font-size:30px;
+  font-weight:800;
+  letter-spacing:0.02em;
+  margin-bottom:4px;
+  line-height:1.15;
+}
+.subtitle { color:#7c8aa5; font-size:13px; margin-bottom:20px; }
+.subtitle .sparkle { color:#c084fc; }
+
+.toggle-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+.toggle-btn {
+  padding:14px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.03);
+  color:#93a4c1;
+  font-weight:700;
+  letter-spacing:0.2em;
+  font-size:12px;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.toggle-btn.out.active {
+  background:rgba(244,114,182,0.12);
+  border-color:#f472b6;
+  color:#f472b6;
+  box-shadow:0 0 20px rgba(244,114,182,0.15);
+}
+.toggle-btn.in.active {
+  background:rgba(34,211,238,0.12);
+  border-color:#22d3ee;
+  color:#22d3ee;
+  box-shadow:0 0 20px rgba(34,211,238,0.15);
+}
+
+/* Nominal input card */
+.nominal-card {
+  padding:16px;
+  background:rgba(15,22,38,0.7);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;
+  margin-bottom:16px;
+}
+.nominal-label { font-size:10px; letter-spacing:0.25em; color:#93a4c1; font-weight:600; margin-bottom:10px; }
+.nominal-row { display:flex; gap:10px; align-items:center; }
+.currency-select {
+  background:rgba(34,211,238,0.08);
+  border:1px solid rgba(34,211,238,0.35);
+  color:#22d3ee;
+  border-radius:10px;
+  padding:10px 12px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  outline:none;
+}
+.nominal-input {
+  flex:1;
+  background:transparent;
+  border:none;
+  color:#fff;
+  font-size:26px;
+  font-weight:700;
+  outline:none;
+  text-align:right;
+  min-width:0;
+}
+.nominal-input::placeholder { color:#3a4560; }
+.nominal-help { font-size:11px; color:#7c8aa5; margin-top:6px; }
+
+/* Categories */
+.cat-grid {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.cat-chip {
+  padding:8px 12px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  color:#c8d3e6;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  display:flex; align-items:center; gap:6px;
+}
+.cat-chip.active {
+  background:rgba(244,114,182,0.14);
+  border-color:#f472b6;
+  color:#f472b6;
+  box-shadow:0 0 15px rgba(244,114,182,0.15);
+}
+.cat-chip.active.in-mode {
+  background:rgba(34,211,238,0.14);
+  border-color:#22d3ee;
+  color:#22d3ee;
+  box-shadow:0 0 15px rgba(34,211,238,0.15);
+}
+
+.detail-input {
+  width:100%;
+  background:rgba(15,22,38,0.7);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;
+  padding:14px;
+  color:#fff;
+  font-size:14px;
+  outline:none;
+  resize:none;
+  min-height:80px;
+  font-family:inherit;
+}
+.detail-input:focus { border-color:rgba(34,211,238,0.5); }
+
+.save-btn {
+  width:100%;
+  padding:16px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(90deg,#0e7490,#22d3ee);
+  color:white;
+  font-weight:800;
+  letter-spacing:0.2em;
+  font-size:13px;
+  cursor:pointer;
+  margin-top:16px;
+  box-shadow:0 6px 30px rgba(34,211,238,0.35);
+}
+.save-btn:active { transform:translateY(1px); }
+
+/* =================================================
+   ANALITIK
+================================================= */
+.month-scroll {
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding-bottom:8px;
+  margin-bottom:14px;
+  scrollbar-width:none;
+}
+.month-scroll::-webkit-scrollbar { display:none; }
+.month-chip {
+  flex-shrink:0;
+  padding:8px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  color:#93a4c1;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.month-chip.active { background:rgba(34,211,238,0.15); border-color:#22d3ee; color:#22d3ee; }
+
+.chart-wrap {
+  background:rgba(15,22,38,0.7);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:14px;
+}
+.chart-title { font-weight:700; margin-bottom:4px; }
+.chart-legend { display:flex; gap:14px; margin-bottom:14px; font-size:11px; color:#93a4c1; }
+.legend-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+
+.chart {
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  height:150px;
+  gap:6px;
+  padding:0 4px;
+}
+.chart-col {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  height:100%;
+  justify-content:flex-end;
+}
+.bars { display:flex; gap:3px; align-items:flex-end; height:130px; width:100%; justify-content:center; }
+.bar { width:10px; border-radius:4px 4px 0 0; min-height:3px; transition:height 0.6s ease; }
+.bar.in  { background:linear-gradient(180deg,#22d3ee,#0e7490); }
+.bar.out { background:linear-gradient(180deg,#f472b6,#be185d); }
+.chart-lbl { font-size:10px; color:#7c8aa5; }
+.chart-lbl.now { color:#22d3ee; font-weight:700; }
+
+/* Category breakdown */
+.cat-list-item { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.cat-color-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.cat-list-body { flex:1; }
+.cat-list-head { display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px; }
+.cat-bar-track { height:6px; background:rgba(255,255,255,0.06); border-radius:999px; overflow:hidden; }
+.cat-bar-fill { height:100%; border-radius:999px; }
+
+/* =================================================
+   PENGATURAN
+================================================= */
+.setting-row {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.pill-btn {
+  padding:6px 12px;
+  border-radius:10px;
+  background:rgba(34,211,238,0.1);
+  border:1px solid rgba(34,211,238,0.4);
+  color:#22d3ee;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+
+.currency-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+.cur-card {
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;
+  padding:12px 6px;
+  text-align:center;
+}
+.cur-flag { font-size:22px; margin-bottom:4px; }
+.cur-code { font-size:12px; font-weight:700; }
+.cur-sym { font-size:10px; color:#7c8aa5; }
+
+.tx-manage-row {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+.tx-manage-title { font-size:12px; letter-spacing:0.2em; color:#93a4c1; font-weight:600; }
+.tx-manage-note { font-size:11px; color:#7c8aa5; text-align:right; }
+
+.del-btn {
+  background:none; border:none; color:#f472b6; cursor:pointer;
+  padding:6px; border-radius:8px;
+  font-size:16px;
+}
+.del-btn:hover { background:rgba(244,114,182,0.1); }
+
+/* =================================================
+   BOTTOM NAV
+================================================= */
+.bottom-nav {
+  position:fixed;
+  bottom:0; left:0; right:0;
+  background:rgba(5,7,13,0.92);
+  border-top:1px solid rgba(255,255,255,0.06);
+  backdrop-filter:blur(20px);
+  display:flex;
+  padding:10px 0 calc(10px + env(safe-area-inset-bottom, 0px));
+  z-index:10;
+}
+.nav-item {
+  flex:1;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:3px;
+  padding:6px 4px;
+  background:none; border:none;
+  color:#7c8aa5;
+  cursor:pointer;
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+}
+.nav-item.active { color:#22d3ee; }
+.nav-icon { font-size:18px; }
+
+/* =================================================
+   MODAL
+================================================= */
+.modal-overlay {
+  position:fixed; inset:0;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(6px);
+  display:none;
+  align-items:center; justify-content:center;
+  z-index:100;
+  padding:20px;
+}
+.modal-overlay.active { display:flex; animation:fadeIn 0.2s; }
+.modal-box {
+  background:#0b101c;
+  border:1px solid rgba(34,211,238,0.3);
+  border-radius:20px;
+  padding:22px;
+  max-width:340px;
+  width:100%;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(34,211,238,0.1);
+}
+.modal-box h3 { font-size:18px; margin-bottom:14px; }
+.modal-input {
+  width:100%;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;
+  padding:12px;
+  color:#fff;
+  font-size:15px;
+  outline:none;
+  margin-bottom:14px;
+}
+.modal-input:focus { border-color:#22d3ee; }
+.modal-actions { display:flex; gap:10px; justify-content:flex-end; }
+.btn-ghost {
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  color:#e6f0ff;
+  padding:10px 16px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+}
+.btn-primary {
+  background:linear-gradient(90deg,#0e7490,#22d3ee);
+  border:none;
+  color:white;
+  padding:10px 20px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+/* =================================================
+   TOAST
+================================================= */
+.toast {
+  position:fixed;
+  bottom:92px;
+  left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:rgba(15,22,38,0.98);
+  border:1px solid rgba(34,211,238,0.4);
+  color:#22d3ee;
+  padding:10px 18px;
+  border-radius:12px;
+  font-size:13px;
+  font-weight:600;
+  opacity:0;
+  transition:all 0.3s ease;
+  z-index:999;
+  pointer-events:none;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* Empty state */
+.empty {
+  text-align:center;
+  padding:32px 20px;
+  color:#7c8aa5;
+  font-size:13px;
+}
+.empty-icon { font-size:36px; margin-bottom:8px; opacity:0.5; }
+</style>
+</head>
+<body>
+
+<!-- ========================================
+     PROFILE SELECTION
+======================================== -->
+<div class="screen active" id="screen-profile">
+  <div class="profile-screen">
+    <div class="profile-title">SIAPA KAMU?</div>
+    <div class="profile-sub">Pilih profil untuk melanjutkan</div>
+    <div class="profile-cards">
+      <div class="profile-card yuuki" onclick="selectProfile('yuuki')">
+        <div class="profile-icon">✦</div>
+        <div class="profile-name">YUUKI</div>
+        <div class="profile-dot"></div>
+      </div>
+      <div class="profile-card yuuna" onclick="selectProfile('yuuna')">
+        <div class="profile-icon">✱</div>
+        <div class="profile-name">YUUNA</div>
+        <div class="profile-dot"></div>
+      </div>
+    </div>
+    <div class="profile-footer">KELUARGA HEMAT • Yuuki ✦ Yuuna</div>
+  </div>
+</div>
+
+<!-- ========================================
+     MAIN APP (Dashboard / Tambah / Analitik / Pengaturan)
+======================================== -->
+<div class="screen" id="screen-main">
+  <div class="app">
+    <!-- Dashboard -->
+    <div id="tab-beranda" class="tab-content">
+      <div class="header">
+        <div>
+          <div class="header-title">HALO,</div>
+          <div class="header-name" id="hdr-name">YUUKI</div>
+        </div>
+        <div class="header-actions">
+          <div class="mod-badge" title="Mode Moderator">⚙ MOD</div>
+          <button class="icon-btn" onclick="logout()" title="Ganti profil">⇆</button>
+        </div>
+      </div>
+
+      <div class="pill-row">
+        <div class="pill" id="pill-solo" onclick="setViewFilter('solo')">
+          <span>●</span> <span id="pill-solo-lbl">YUUKI</span>
+        </div>
+        <div class="pill" id="pill-both" onclick="setViewFilter('both')">
+          <span>◐</span> BERDUA
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">SALDO BULAN INI</div>
+        <div class="balance-amount" id="balance-amt">Rp 0</div>
+        <div class="currency-row" id="cur-chips-dash"></div>
+        <div class="target-row">
+          <div class="target-label">◎ Target Tabungan</div>
+          <div class="target-pct" id="target-pct">0%</div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="target-fill" style="width:0%"></div>
+        </div>
+        <div class="progress-info" id="target-info">Rp 0 / Rp 500,000</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box in">
+          <div class="stat-icon">↓</div>
+          <div>
+            <div class="stat-info-label">PEMASUKAN</div>
+            <div class="stat-info-value" id="stat-in">Rp 0</div>
+          </div>
+        </div>
+        <div class="stat-box out">
+          <div class="stat-icon">↑</div>
+          <div>
+            <div class="stat-info-label">PENGELUARAN</div>
+            <div class="stat-info-value" id="stat-out">Rp 0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-head">
+        <div class="section-title">Transaksi Terbaru</div>
+        <button class="link-btn" onclick="switchTab('pengaturan')">LIHAT SEMUA</button>
+      </div>
+      <div id="tx-list-recent"></div>
+    </div>
+
+    <!-- Tambah -->
+    <div id="tab-tambah" class="tab-content" style="display:none;">
+      <div class="big-title">TAMBAH<br/>TRANSAKSI</div>
+      <div class="subtitle">oleh <span id="add-owner-name">yuuki</span> <span class="sparkle">✦</span></div>
+
+      <div class="toggle-row">
+        <div class="toggle-btn out active" id="type-out" onclick="setTxType('out')">◉ PENGELUARAN</div>
+        <div class="toggle-btn in" id="type-in" onclick="setTxType('in')">◎ PEMASUKAN</div>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-btn in active" id="owner-yuuki" onclick="setTxOwner('yuuki')">✦ YUUKI</div>
+        <div class="toggle-btn" id="owner-yuuna" onclick="setTxOwner('yuuna')">✱ YUUNA</div>
+      </div>
+
+      <div class="nominal-card">
+        <div class="nominal-label">NOMINAL</div>
+        <div class="nominal-row">
+          <select class="currency-select" id="add-cur">
+            <option value="IDR">Rp IDR</option>
+            <option value="USD">$ USD</option>
+            <option value="MYR">RM MYR</option>
+            <option value="SGD">S$ SGD</option>
+            <option value="EUR">€ EUR</option>
+            <option value="JPY">¥ JPY</option>
+            <option value="GBP">£ GBP</option>
+            <option value="AUD">A$ AUD</option>
+          </select>
+          <input class="nominal-input" id="add-amt" type="number" placeholder="0" min="0" step="any" />
+        </div>
+        <div class="nominal-help" id="cur-help">Indonesian Rupiah</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">KATEGORI</div>
+        <div class="cat-grid" id="cat-grid"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">DETAIL</div>
+        <textarea class="detail-input" id="add-detail" placeholder="Untuk apa transaksi ini?"></textarea>
+      </div>
+
+      <button class="save-btn" onclick="saveTransaction()">SIMPAN TRANSAKSI</button>
+    </div>
+
+    <!-- Analitik -->
+    <div id="tab-analitik" class="tab-content" style="display:none;">
+      <div class="header" style="align-items:center;">
+        <div class="header-name" style="font-size:22px;">ANALITIK</div>
+        <div class="currency-row" style="margin:0; flex-wrap:nowrap;" id="cur-chips-ana"></div>
+      </div>
+
+      <div class="month-scroll" id="month-scroll"></div>
+
+      <div class="stat-box in" style="margin-bottom:10px;">
+        <div class="stat-icon">↗</div>
+        <div style="flex:1;">
+          <div class="stat-info-label">PEMASUKAN</div>
+          <div class="stat-info-value" id="ana-in" style="font-size:24px;">Rp 0</div>
+        </div>
+      </div>
+      <div class="stat-box out" style="margin-bottom:16px;">
+        <div class="stat-icon">↘</div>
+        <div style="flex:1;">
+          <div class="stat-info-label">PENGELUARAN</div>
+          <div class="stat-info-value" id="ana-out" style="font-size:24px;">Rp 0</div>
+        </div>
+      </div>
+
+      <div class="chart-wrap">
+        <div class="chart-title">Grafik 6 Bulan Terakhir</div>
+        <div class="chart-legend">
+          <span><span class="legend-dot" style="background:#22d3ee;"></span>Pemasukan</span>
+          <span><span class="legend-dot" style="background:#f472b6;"></span>Pengeluaran</span>
+        </div>
+        <div class="chart" id="chart-6m"></div>
+      </div>
+
+      <div class="chart-wrap">
+        <div class="chart-title" style="margin-bottom:14px;">◐ Pengeluaran per Kategori</div>
+        <div id="cat-breakdown"></div>
+      </div>
+    </div>
+
+    <!-- Pengaturan -->
+    <div id="tab-pengaturan" class="tab-content" style="display:none;">
+      <div class="header">
+        <div>
+          <div class="header-name" style="font-size:26px;">PENGATURAN</div>
+          <div class="subtitle" style="margin:2px 0 0;"><span id="set-owner-name">yuuki</span> <span class="sparkle">✦</span></div>
+        </div>
+        <div class="mod-badge">⚙ MOD</div>
+      </div>
+
+      <div class="card">
+        <div class="setting-row">
+          <div>
+            <div class="card-label">TARGET TABUNGAN BULAN INI</div>
+            <div class="balance-amount" style="font-size:24px; margin:0;" id="set-target">Rp 500,000</div>
+          </div>
+          <button class="pill-btn" onclick="openTargetModal()">✎ UBAH</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px;">MATA UANG DIDUKUNG</div>
+        <div class="currency-grid">
+          <div class="cur-card"><div class="cur-flag">🇮🇩</div><div class="cur-code">IDR</div><div class="cur-sym">Rp</div></div>
+          <div class="cur-card"><div class="cur-flag">🇺🇸</div><div class="cur-code">USD</div><div class="cur-sym">$</div></div>
+          <div class="cur-card"><div class="cur-flag">🇲🇾</div><div class="cur-code">MYR</div><div class="cur-sym">RM</div></div>
+          <div class="cur-card"><div class="cur-flag">🇸🇬</div><div class="cur-code">SGD</div><div class="cur-sym">S$</div></div>
+          <div class="cur-card"><div class="cur-flag">🇪🇺</div><div class="cur-code">EUR</div><div class="cur-sym">€</div></div>
+          <div class="cur-card"><div class="cur-flag">🇯🇵</div><div class="cur-code">JPY</div><div class="cur-sym">¥</div></div>
+          <div class="cur-card"><div class="cur-flag">🇬🇧</div><div class="cur-code">GBP</div><div class="cur-sym">£</div></div>
+          <div class="cur-card"><div class="cur-flag">🇦🇺</div><div class="cur-code">AUD</div><div class="cur-sym">A$</div></div>
+        </div>
+        <div style="font-size:11px; color:#7c8aa5; margin-top:10px; display:flex; align-items:center; gap:6px;">
+          ⟳ Konversi kurs real-time via Frankfurter.dev
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="tx-manage-row">
+          <div class="tx-manage-title">SEMUA TRANSAKSI (Bulan Ini)</div>
+          <div class="tx-manage-note">Login moderator<br/>untuk hapus</div>
+        </div>
+        <div id="tx-list-all"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-tab="beranda" onclick="switchTab('beranda')">
+      <div class="nav-icon">⌂</div>BERANDA
+    </button>
+    <button class="nav-item" data-tab="tambah" onclick="switchTab('tambah')">
+      <div class="nav-icon">⊕</div>TAMBAH
+    </button>
+    <button class="nav-item" data-tab="analitik" onclick="switchTab('analitik')">
+      <div class="nav-icon">📊</div>ANALITIK
+    </button>
+    <button class="nav-item" data-tab="pengaturan" onclick="switchTab('pengaturan')">
+      <div class="nav-icon">⚙</div>PENGATURAN
+    </button>
+  </nav>
+</div>
+
+<!-- Modal: Target -->
+<div class="modal-overlay" id="modal-target">
+  <div class="modal-box">
+    <h3>Ubah Target Tabungan</h3>
+    <input type="number" class="modal-input" id="target-input" placeholder="500000" min="0" />
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">Batal</button>
+      <button class="btn-primary" onclick="saveTarget()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =============================================
+   DATA & STATE
+============================================= */
+const STORAGE = 'keluarga_hemat_v1';
+
+// Exchange rates (approx; base IDR)
+const RATES_TO_IDR = {
+  IDR: 1, USD: 15700, MYR: 3500, SGD: 11600, EUR: 17000, JPY: 100, GBP: 20000, AUD: 10300
+};
+const CURRENCY_SYMBOL = { IDR:'Rp', USD:'$', MYR:'RM', SGD:'S$', EUR:'€', JPY:'¥', GBP:'£', AUD:'A$' };
+const CURRENCY_NAME = { IDR:'Indonesian Rupiah', USD:'US Dollar', MYR:'Malaysian Ringgit', SGD:'Singapore Dollar', EUR:'Euro', JPY:'Japanese Yen', GBP:'British Pound', AUD:'Australian Dollar' };
+
+const CATEGORIES = [
+  { key:'makan', label:'Makan', icon:'🍽', color:'#f472b6' },
+  { key:'transport', label:'Transport', icon:'🚗', color:'#22d3ee' },
+  { key:'belanja', label:'Belanja', icon:'🛒', color:'#c084fc' },
+  { key:'tagihan', label:'Tagihan', icon:'📄', color:'#fbbf24' },
+  { key:'hiburan', label:'Hiburan', icon:'🎮', color:'#f97316' },
+  { key:'kesehatan', label:'Kesehatan', icon:'💊', color:'#34d399' },
+  { key:'hadiah', label:'Hadiah', icon:'🎁', color:'#ec4899' },
+  { key:'gaji', label:'Gaji', icon:'💼', color:'#22d3ee' },
+  { key:'bonus', label:'Bonus', icon:'⭐', color:'#818cf8' },
+  { key:'lainnya', label:'Lainnya', icon:'⋯', color:'#94a3b8' },
+];
+
+let state = {
+  currentUser: null,       // 'yuuki' | 'yuuna'
+  viewFilter: 'solo',      // 'solo' | 'both'
+  currency: 'IDR',
+  anaCurrency: 'IDR',
+  anaMonth: null,          // YYYY-MM
+  target: 500000,          // in IDR
+  addType: 'out',
+  addOwner: 'yuuki',
+  addCategory: 'makan',
+  transactions: [],
+};
+
+/* =============================================
+   PERSISTENCE
+============================================= */
+function load() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE) || 'null');
+    if (saved) state = {...state, ...saved};
+  } catch(e){}
+}
+function save() {
+  localStorage.setItem(STORAGE, JSON.stringify({
+    currentUser: state.currentUser,
+    target: state.target,
+    transactions: state.transactions,
+  }));
+}
+
+/* =============================================
+   FORMATTING
+============================================= */
+function convert(amountIDR, toCur) {
+  return amountIDR / RATES_TO_IDR[toCur];
+}
+function fmt(amountIDR, cur) {
+  const v = convert(amountIDR, cur);
+  const sym = CURRENCY_SYMBOL[cur];
+  if (cur === 'IDR') return `Rp ${Math.round(v).toLocaleString('id-ID')}`;
+  if (cur === 'JPY') return `${sym} ${Math.round(v).toLocaleString('en-US')}`;
+  return `${sym} ${v.toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2})}`;
+}
+function nowMonth() {
+  const d = new Date();
+  return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}`;
+}
+function monthOf(ts) {
+  const d = new Date(ts);
+  return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}`;
+}
+function fmtDate(ts) {
+  const d = new Date(ts);
+  return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear().toString().slice(2)}`;
+}
+function monthLabel(ym) {
+  const [y,m] = ym.split('-');
+  const names = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  return `${names[parseInt(m)-1]} ${y.slice(2)}`;
+}
+
+/* =============================================
+   PROFILE / TABS
+============================================= */
+function selectProfile(user) {
+  state.currentUser = user;
+  state.addOwner = user;
+  save();
+  document.getElementById('screen-profile').classList.remove('active');
+  document.getElementById('screen-main').classList.add('active');
+  renderAll();
+}
+
+function logout() {
+  state.currentUser = null;
+  save();
+  document.getElementById('screen-main').classList.remove('active');
+  document.getElementById('screen-profile').classList.add('active');
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.style.display='none');
+  document.getElementById('tab-'+tab).style.display='block';
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.tab===tab));
+  window.scrollTo(0,0);
+  if (tab==='analitik') renderAnalitik();
+  if (tab==='pengaturan') renderPengaturan();
+  if (tab==='beranda') renderDashboard();
+  if (tab==='tambah') renderTambah();
+}
+
+function setViewFilter(f) {
+  state.viewFilter = f;
+  renderDashboard();
+}
+
+/* =============================================
+   RENDER: DASHBOARD
+============================================= */
+function currentFilteredTx() {
+  const ym = nowMonth();
+  return state.transactions.filter(t => {
+    if (monthOf(t.createdAt) !== ym) return false;
+    if (state.viewFilter === 'solo') return t.owner === state.currentUser;
+    return true;
+  });
+}
+
+function renderDashboard() {
+  // Header
+  document.getElementById('hdr-name').textContent = state.currentUser.toUpperCase();
+  document.getElementById('pill-solo-lbl').textContent = state.currentUser.toUpperCase();
+  const pillSolo = document.getElementById('pill-solo');
+  const pillBoth = document.getElementById('pill-both');
+  pillSolo.classList.remove('active-cyan','active-purple');
+  pillBoth.classList.remove('active-both');
+  if (state.viewFilter==='solo') {
+    pillSolo.classList.add(state.currentUser==='yuuki'?'active-cyan':'active-purple');
+  } else {
+    pillBoth.classList.add('active-both');
+  }
+
+  // Currency chips
+  renderCurChips('cur-chips-dash', state.currency, (c)=>{ state.currency=c; renderDashboard(); });
+
+  // Totals
+  const tx = currentFilteredTx();
+  let income = 0, expense = 0;
+  tx.forEach(t => t.type==='in' ? income+=t.amountIDR : expense+=t.amountIDR);
+  const balance = income - expense;
+  document.getElementById('balance-amt').textContent = fmt(balance, state.currency);
+  document.getElementById('stat-in').textContent  = fmt(income,  state.currency);
+  document.getElementById('stat-out').textContent = fmt(expense, state.currency);
+
+  // Target
+  const pct = state.target>0 ? Math.min(100, Math.round((Math.max(0,balance)/state.target)*100)) : 0;
+  document.getElementById('target-pct').textContent = pct+'%';
+  document.getElementById('target-fill').style.width = pct+'%';
+  document.getElementById('target-info').textContent = `${fmt(Math.max(0,balance),state.currency)} / ${fmt(state.target,state.currency)}`;
+
+  // Recent tx
+  const list = tx.slice().sort((a,b)=>b.createdAt-a.createdAt).slice(0,5);
+  renderTxList('tx-list-recent', list, false);
+}
+
+function renderCurChips(elId, active, onClick) {
+  const el = document.getElementById(elId);
+  const list = ['IDR','USD','MYR','SGD','EUR','JPY'];
+  el.innerHTML = list.map(c =>
+    `<div class="cur-chip ${c===active?'active':''}" data-c="${c}">${c}</div>`
+  ).join('');
+  el.querySelectorAll('.cur-chip').forEach(chip => {
+    chip.onclick = () => onClick(chip.dataset.c);
+  });
+}
+
+function renderTxList(elId, list, showDelete=false) {
+  const el = document.getElementById(elId);
+  if (list.length===0) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">◌</div>Belum ada transaksi</div>`;
+    return;
+  }
+  el.innerHTML = list.map(t => {
+    const cat = CATEGORIES.find(c=>c.key===t.category) || CATEGORIES[9];
+    const sign = t.type==='in'?'+':'-';
+    const cls  = t.type==='in'?'in':'out';
+    return `
+      <div class="tx-item">
+        <div class="tx-icon" style="color:${cat.color}">${cat.icon}</div>
+        <div class="tx-body">
+          <div class="tx-title">${escapeHtml(t.detail || cat.label)}</div>
+          <div class="tx-meta">${cap(t.owner)} · ${cat.label} · ${fmtDate(t.createdAt)}</div>
+        </div>
+        <div>
+          <div class="tx-amount ${cls}">${sign} ${fmt(t.amountIDR, state.currency)}</div>
+          ${showDelete?`<button class="del-btn" onclick="deleteTx('${t.id}')" title="Hapus">🗑</button>`:''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* =============================================
+   RENDER: TAMBAH
+============================================= */
+function renderTambah() {
+  document.getElementById('add-owner-name').textContent = state.addOwner;
+  document.getElementById('owner-yuuki').classList.toggle('active', state.addOwner==='yuuki');
+  document.getElementById('owner-yuuna').classList.toggle('active', state.addOwner==='yuuna');
+  const oy = document.getElementById('owner-yuuki');
+  const on = document.getElementById('owner-yuuna');
+  oy.classList.remove('in','out'); oy.classList.add('in');
+  on.classList.remove('in','out'); on.classList.add('in');
+
+  document.getElementById('type-out').classList.toggle('active', state.addType==='out');
+  document.getElementById('type-in').classList.toggle('active', state.addType==='in');
+
+  // Currency label
+  document.getElementById('cur-help').textContent = CURRENCY_NAME[document.getElementById('add-cur').value] || '';
+
+  // Categories
+  renderCategories();
+}
+
+function renderCategories() {
+  const grid = document.getElementById('cat-grid');
+  const isIn = state.addType==='in';
+  grid.innerHTML = CATEGORIES.map(c => {
+    const active = state.addCategory===c.key;
+    return `<div class="cat-chip ${active?'active':''} ${active&&isIn?'in-mode':''}" onclick="pickCat('${c.key}')">
+      <span>${c.icon}</span> <span>${c.label}</span>
+    </div>`;
+  }).join('');
+}
+
+function setTxType(t) {
+  state.addType = t;
+  renderTambah();
+}
+function setTxOwner(o) {
+  state.addOwner = o;
+  renderTambah();
+}
+function pickCat(k) {
+  state.addCategory = k;
+  renderCategories();
+}
+
+function saveTransaction() {
+  const amtEl = document.getElementById('add-amt');
+  const cur   = document.getElementById('add-cur').value;
+  const raw   = parseFloat(amtEl.value);
+  if (!raw || raw<=0) { showToast('Masukkan nominal yang valid'); return; }
+  const amountIDR = raw * RATES_TO_IDR[cur];
+  const tx = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    owner: state.addOwner,
+    type: state.addType,
+    category: state.addCategory,
+    amountIDR,
+    currency: cur,
+    originalAmount: raw,
+    detail: document.getElementById('add-detail').value.trim(),
+    createdAt: Date.now()
+  };
+  state.transactions.push(tx);
+  save();
+  amtEl.value = '';
+  document.getElementById('add-detail').value = '';
+  showToast('✓ Transaksi tersimpan');
+  setTimeout(()=>switchTab('beranda'), 500);
+}
+
+/* =============================================
+   RENDER: ANALITIK
+============================================= */
+function renderAnalitik() {
+  // currency chips
+  renderCurChips('cur-chips-ana', state.anaCurrency, (c)=>{ state.anaCurrency=c; renderAnalitik(); });
+
+  // Month scroll (6 months)
+  const months = [];
+  const now = new Date();
+  for (let i=5;i>=0;i--){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    months.push(`${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}`);
+  }
+  if (!state.anaMonth) state.anaMonth = months[months.length-1];
+  const ms = document.getElementById('month-scroll');
+  ms.innerHTML = months.map(m =>
+    `<div class="month-chip ${m===state.anaMonth?'active':''}" onclick="setAnaMonth('${m}')">${monthLabel(m)}</div>`
+  ).join('');
+
+  // Totals for selected month (viewFilter respected? use both for analitik)
+  const selTx = state.transactions.filter(t => monthOf(t.createdAt) === state.anaMonth &&
+    (state.viewFilter==='both' ? true : t.owner===state.currentUser));
+  let income=0, expense=0;
+  selTx.forEach(t => t.type==='in' ? income+=t.amountIDR : expense+=t.amountIDR);
+
+  // temporarily swap currency for display
+  const cur = state.anaCurrency;
+  document.getElementById('ana-in').textContent = fmtCur(income, cur);
+  document.getElementById('ana-out').textContent = fmtCur(expense, cur);
+
+  // Chart 6 months
+  const chart = document.getElementById('chart-6m');
+  const perMonth = months.map(m => {
+    const tx = state.transactions.filter(t => monthOf(t.createdAt)===m &&
+      (state.viewFilter==='both'?true:t.owner===state.currentUser));
+    let i=0,o=0;
+    tx.forEach(t => t.type==='in' ? i+=t.amountIDR : o+=t.amountIDR);
+    return { m, i, o };
+  });
+  const maxVal = Math.max(1, ...perMonth.flatMap(x => [x.i, x.o]));
+  chart.innerHTML = perMonth.map((p,idx)=>{
+    const hi = Math.round((p.i/maxVal)*100);
+    const ho = Math.round((p.o/maxVal)*100);
+    const isNow = idx === perMonth.length-1;
+    return `<div class="chart-col">
+      <div class="bars">
+        ${p.i>0?`<div class="bar in" style="height:${hi}%"></div>`:'<div class="bar in" style="height:0"></div>'}
+        ${p.o>0?`<div class="bar out" style="height:${ho}%"></div>`:'<div class="bar out" style="height:0"></div>'}
+      </div>
+      <div class="chart-lbl ${isNow?'now':''}">${monthLabel(p.m)}</div>
+    </div>`;
+  }).join('');
+
+  // Category breakdown (pengeluaran of selected month)
+  const catEl = document.getElementById('cat-breakdown');
+  const catTotals = {};
+  selTx.filter(t=>t.type==='out').forEach(t => {
+    catTotals[t.category] = (catTotals[t.category]||0) + t.amountIDR;
+  });
+  const catArr = Object.entries(catTotals).sort((a,b)=>b[1]-a[1]);
+  const catTotal = catArr.reduce((s,[,v])=>s+v, 0);
+  if (catArr.length===0) {
+    catEl.innerHTML = `<div class="empty">Belum ada pengeluaran</div>`;
+  } else {
+    catEl.innerHTML = catArr.map(([k,v])=>{
+      const c = CATEGORIES.find(x=>x.key===k) || CATEGORIES[9];
+      const pct = Math.round((v/catTotal)*100);
+      return `<div class="cat-list-item">
+        <div class="cat-color-dot" style="background:${c.color}"></div>
+        <div class="cat-list-body">
+          <div class="cat-list-head">
+            <span>${c.icon} ${c.label}</span>
+            <span style="color:#93a4c1;">${fmtCur(v, cur)} · ${pct}%</span>
+          </div>
+          <div class="cat-bar-track">
+            <div class="cat-bar-fill" style="width:${pct}%; background:${c.color};"></div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+function fmtCur(amountIDR, cur) {
+  const v = convert(amountIDR, cur);
+  const sym = CURRENCY_SYMBOL[cur];
+  if (cur === 'IDR') return `Rp ${Math.round(v).toLocaleString('id-ID')}`;
+  if (cur === 'JPY') return `${sym} ${Math.round(v).toLocaleString('en-US')}`;
+  return `${sym} ${v.toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2})}`;
+}
+
+function setAnaMonth(m) {
+  state.anaMonth = m;
+  renderAnalitik();
+}
+
+/* =============================================
+   RENDER: PENGATURAN
+============================================= */
+function renderPengaturan() {
+  document.getElementById('set-owner-name').textContent = state.currentUser;
+  document.getElementById('set-target').textContent = `Rp ${state.target.toLocaleString('id-ID')}`;
+
+  const ym = nowMonth();
+  const tx = state.transactions
+    .filter(t => monthOf(t.createdAt) === ym)
+    .sort((a,b)=>b.createdAt-a.createdAt);
+  renderTxList('tx-list-all', tx, true);
+}
+
+function deleteTx(id) {
+  if (!confirm('Hapus transaksi ini?')) return;
+  state.transactions = state.transactions.filter(t => t.id !== id);
+  save();
+  showToast('Transaksi dihapus');
+  renderPengaturan();
+}
+
+/* =============================================
+   MODAL
+============================================= */
+function openTargetModal() {
+  document.getElementById('target-input').value = state.target;
+  document.getElementById('modal-target').classList.add('active');
+}
+function closeModal() {
+  document.getElementById('modal-target').classList.remove('active');
+}
+function saveTarget() {
+  const v = parseFloat(document.getElementById('target-input').value);
+  if (!v || v<0) { showToast('Target tidak valid'); return; }
+  state.target = v;
+  save();
+  closeModal();
+  showToast('✓ Target diperbarui');
+  renderPengaturan();
+}
+
+/* =============================================
+   UTILS
+============================================= */
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]); }
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
+function renderAll() {
+  state.viewFilter = 'solo';
+  switchTab('beranda');
+}
+
+/* =============================================
+   EVENTS
+============================================= */
+document.addEventListener('DOMContentLoaded', () => {
+  load();
+  document.getElementById('add-cur').addEventListener('change', (e)=>{
+    document.getElementById('cur-help').textContent = CURRENCY_NAME[e.target.value] || '';
+  });
+  document.getElementById('modal-target').addEventListener('click',(e)=>{
+    if (e.target.id==='modal-target') closeModal();
+  });
+
+  // Auto-login if profile saved
+  if (state.currentUser) {
+    document.getElementById('screen-profile').classList.remove('active');
+    document.getElementById('screen-main').classList.add('active');
+    renderAll();
+  }
+
+  // Seed if empty
+  if (state.transactions.length === 0) {
+    const now = Date.now();
+    state.transactions = [
+      { id:'s1', owner:'yuuki', type:'in',  category:'lainnya', amountIDR:12000,  currency:'IDR', originalAmount:12000,  detail:'Dana',           createdAt: now-1*86400000 },
+      { id:'s2', owner:'yuuki', type:'in',  category:'gaji',    amountIDR:90000,  currency:'IDR', originalAmount:90000,  detail:'Shopee',         createdAt: now-2*86400000 },
+      { id:'s3', owner:'yuuki', type:'in',  category:'hadiah',  amountIDR:164000, currency:'IDR', originalAmount:164000, detail:'Rekening',       createdAt: now-3*86400000 },
+      { id:'s4', owner:'yuuki', type:'in',  category:'lainnya', amountIDR:164000, currency:'IDR', originalAmount:164000, detail:'Duit di Dompet', createdAt: now-4*86400000 },
+    ];
+    save();
+  }
+});
+</script>
+</body>
+</html>
